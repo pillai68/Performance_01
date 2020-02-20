@@ -26,7 +26,7 @@ int main()
       move_forward(25, 10);
     }
 
-  /*
+  /* yeet
     //Code to make robot read the start light to move
     while(!(cds.Value()>0.300 && cds.Value()<0.358));
 
