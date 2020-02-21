@@ -23,6 +23,13 @@ void stopMotors();
 // ***************************************************************************
 int main()
 {
+    //Print the voltage level of battery every 1/2 second
+        while(true)
+        {
+            // get the voltage level and display it to the screen
+            LCD.WriteLine( Battery.Voltage() );
+            Sleep( 0.5 );
+        }
     //Code to make robot read the start light to move
     while(!(cds.Value()>0.300 && cds.Value()<0.358));
     buttonServo.SetMin(590);
@@ -46,18 +53,21 @@ int main()
     changeMiniServo();
 
     left_motor.SetPercent(25);
-    Sleep(1.75);
+    Sleep(1.80);
 
     //Moving robot closer to jukebox
-    move_forward(-motor_percent,counts*10); //robot moves backward for 2 inches
+    move_forward(-motor_percent,counts*10.5); //robot moves backward for 2 inches
 
-    //moving robot to Ramp
+    //moving robot to and up the Ramp
     move_forward(motor_percent,counts*4); //robot moves backwards for about 2 inches
-    turn_right(motor_percent,counts*6); //makes a 90 degree right turn that's about 6 inches
-    move_forward(motor_percent,counts*8); //robot moves forward around 8 inches
-    turn_right(motor_percent,counts*6); //makes a 90 degree left turn that's about 6
+    turn_right(motor_percent,counts*5); //makes a 90 degree right turn that's about 6 inches
+    move_forward(motor_percent,counts*8.75); //robot moves forward around 8 inches
+    turn_right(motor_percent,counts*5.5);//makes a 90 degree left turn that's about 6
     move_forward(-motor_percent*2,counts*35); //robot moves forward around 30 inches up the ramp
 
+    //Move the robot down the ramp
+    Sleep(0.5);
+    move_forward(motor_percent,counts*30);
 
 }
 //*****************************************************************************
@@ -67,10 +77,13 @@ void changeMiniServo(){
     LCD.WriteLine("CDS Value: " );
     LCD.Write(cds.Value());
     float x = cds.Value();
-    if(x>0.00 && x<0.24) { //if cdS cell picks up red
+    if(x>0.00 && x<0.8) { //if cdS cell picks up red
+       LCD.WriteLine("Red Light");
       buttonServo.SetDegree(0);
+
     }else if(x>0.8 && x<2.24){
       buttonServo.SetDegree(180);
+      LCD.WriteLine("Blue Light");
     }
 }
 
@@ -133,3 +146,4 @@ void stopMotors(){
     right_motor.Stop();
 
 }
+
