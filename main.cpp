@@ -8,55 +8,57 @@
 DigitalEncoder right_encoder(FEHIO::P0_1);
 DigitalEncoder left_encoder(FEHIO::P0_0);
 
-FEHMotor right_motor(FEHMotor::Motor1,9.0);
-FEHMotor left_motor(FEHMotor::Motor0,9.0);
+FEHMotor right_motor(FEHMotor::Motor0,9.0);
+FEHMotor left_motor(FEHMotor::Motor1,9.0);
 
 FEHServo buttonServo(FEHServo::Servo0); //declaring the servo to port 0.
 AnalogInputPin cds(FEHIO::P2_0); //declaring cds cell
 
 void changeMiniServo();
-void move_forward(int percent, int counts);
-void turn_right(int percent, int counts);
-void turn_left(int percent, int counts);
+void move_forward(float percent, float counts);
+void turn_right(float percent, float counts);
+void turn_left(float percent, float counts);
+void stopMotors();
 
 // ***************************************************************************
 int main()
 {
-    while(true){
-      move_forward(25, 10);
-    }
-
-  /* yeet
     //Code to make robot read the start light to move
     while(!(cds.Value()>0.300 && cds.Value()<0.358));
+    buttonServo.SetMin(590);
+    buttonServo.SetMax(2330);
+    buttonServo.SetDegree(0);
 
     //Moving Robot to jukebox
     int motor_percent = 25; //intializes motor percent
     int counts = 40.49; //intializes encoder counts
 
-    //Portion of code used to navigate the robot from the start area to the jukebox
-    move_forward(motor_percent, counts*13.5); //robot moves forward for around 13.5 inches
-    turn_left(motor_percent,counts*3); //robot makes a 45 degree left turn
-    move_forward(motor_percent,counts*8); //robot moves foward for around 8 inches
-    turn_right(motor_percent,counts*6); //robot makes a 90 degree right turn9
+    move_forward(motor_percent, counts*18.5);
+    //Approaching the light.
+    /*while(!(cds.Value()>0 && cds.Value()<0.23) || !(cds.Value()>1.35 && cds.Value()<1.39)){
+        //code to make robot read the light, approach the to press jukebox button
+        move_forward(-motor_percent,counts*0.1); //robot moves backward around 4 inches
+    }*/
 
-    //code to make robot read the light, approach the to press jukebox button
-    move_forward(-motor_percent,counts*6); //robot moves backward around 4 inches
-
-    //Moving robot closer to jukebox
-    move_forward(-motor_percent,counts*2); //robot moves backward for 2 inches
+    stopMotors();
+    Sleep(2.0);
     //Changing the orientation of buttonServo to read light
-    buttonServo.SetMin(525);
-    buttonServo.SetMax(2410);
     changeMiniServo();
 
+    left_motor.SetPercent(25);
+    Sleep(1.75);
+
+    //Moving robot closer to jukebox
+    move_forward(-motor_percent,counts*10); //robot moves backward for 2 inches
+
     //moving robot to Ramp
-    move_forward(-motor_percent,counts*2); //robot moves backwards for about 2 inches
-    turn_left(motor_percent,counts*6); //makes a 90 degree left turn that's about 6 inches
+    move_forward(motor_percent,counts*4); //robot moves backwards for about 2 inches
+    turn_right(motor_percent,counts*6); //makes a 90 degree right turn that's about 6 inches
     move_forward(motor_percent,counts*8); //robot moves forward around 8 inches
-    turn_left(motor_percent,counts*6); //makes a 90 degree left turn that's about 6
-    move_forward(motor_percent*3,counts*30); //robot moves forward around 30 inches up the ramp
-*/
+    turn_right(motor_percent,counts*6); //makes a 90 degree left turn that's about 6
+    move_forward(-motor_percent*2,counts*35); //robot moves forward around 30 inches up the ramp
+
+
 }
 //*****************************************************************************
 
@@ -65,14 +67,14 @@ void changeMiniServo(){
     LCD.WriteLine("CDS Value: " );
     LCD.Write(cds.Value());
     float x = cds.Value();
-    if(x>0.170 && x<0.470) { //if cdS cell picks up red
-      buttonServo.SetDegree(525);
-    }else{
-      buttonServo.SetDegree(2410);
+    if(x>0.00 && x<0.24) { //if cdS cell picks up red
+      buttonServo.SetDegree(0);
+    }else if(x>0.8 && x<2.24){
+      buttonServo.SetDegree(180);
     }
 }
 
-void move_forward(int percent, int counts) //using encoders
+void move_forward(float percent, float counts) //using encoders
 {
     //Reset encoder counts
     right_encoder.ResetCounts();
@@ -91,7 +93,7 @@ void move_forward(int percent, int counts) //using encoders
     left_motor.Stop();
 }
 
-void turn_right(int percent, int counts) {
+void turn_right(float percent, float counts) {
     //Reset encoder counts
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -109,7 +111,7 @@ void turn_right(int percent, int counts) {
 }
 
 //This is the function used to turn the robot counterclockwise.
-void turn_left(int percent, int counts) {
+void turn_left(float percent, float counts) {
     //Reset encoder counts
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -123,4 +125,11 @@ void turn_left(int percent, int counts) {
     //Turn off motors
     right_motor.Stop();
     left_motor.Stop();
+}
+
+//this function is to stop the motors
+void stopMotors(){
+    left_motor.Stop();
+    right_motor.Stop();
+
 }
