@@ -23,7 +23,7 @@ void stopMotors();
 // ***************************************************************************
 int main()
 {
-    //Print the voltage level of battery every 1/2 second
+    //Print the voltage level of battery every 1/2 second.... be wary about this.. just added after PT01.. Not sure if this will work.
         while(true)
         {
             // get the voltage level and display it to the screen
