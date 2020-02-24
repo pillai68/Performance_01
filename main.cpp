@@ -4,7 +4,7 @@
 #include <FEHMotor.h>
 #include <FEHLCD.h>
 
-//Declaring encoders and motors uwu
+//Declaring encoders and motors
 DigitalEncoder right_encoder(FEHIO::P0_1);
 DigitalEncoder left_encoder(FEHIO::P0_0);
 
